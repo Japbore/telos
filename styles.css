@@ -1,0 +1,112 @@
+:root {
+  --telos-bg: #0f172a;
+  --telos-surface: rgba(30, 41, 59, 0.7);
+  --telos-border: rgba(255, 255, 255, 0.08);
+  --telos-text-primary: #e2e8f0;
+  --telos-text-secondary: #94a3b8;
+  --telos-accent: #8b5cf6;
+  --telos-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--telos-bg);
+  background-image: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+                    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.15), transparent 25%);
+  background-attachment: fixed;
+  color: var(--telos-text-primary);
+  min-height: 100vh;
+  margin: 0;
+}
+
+.head-title {
+  background: var(--telos-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+}
+.subtitle {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.text-accent {
+  color: #a78bfa !important;
+}
+
+.glass-panel {
+  background: var(--telos-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--telos-border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.highlight-panel {
+    border: 1px solid rgba(139,92,246, 0.3);
+    background: rgba(30, 41, 59, 0.85);
+}
+
+.btn-primary {
+  background: var(--telos-gradient) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+.btn-primary:hover, .btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.stat-box {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 14px;
+  padding: 12px 6px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  color: var(--telos-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+input.form-control {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid var(--telos-border) !important;
+  color: white !important;
+  transition: all 0.2s ease;
+}
+input.form-control:focus {
+  background: rgba(15, 23, 42, 1) !important;
+  border-color: var(--telos-accent) !important;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15) !important;
+}
+input.form-control::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) hue-rotate(200deg) saturate(3);
+  cursor: pointer;
+}

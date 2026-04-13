@@ -1,0 +1,10 @@
+{
+  "name": "Telos Rastreador de Lectura",
+  "short_name": "Telos",
+  "description": "Tu rastreador offline de velocidad y progreso de lectura",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#8b5cf6",
+  "icons": []
+}

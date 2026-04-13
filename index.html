@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telos</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container py-4" style="max-width: 500px;">
+        <header class="text-center mb-4 mt-2 position-relative">
+            <button id="btn-config-open" class="btn btn-sm text-secondary position-absolute top-0 end-0" style="border: none; font-size: 1.3rem; background: transparent;">⚙️</button>
+            <h1 class="fw-bold head-title">TELOS</h1>
+            <p class="text-muted subtitle">Rastreador de lectura inteligente</p>
+        </header>
+
+        <!-- VIEW CONFIG -->
+        <main id="view-config" class="glass-panel d-none">
+            <h3 class="mb-4 text-center text-white">Configuración</h3>
+            <form id="form-config">
+                <div class="mb-4">
+                    <label class="form-label text-light">Registros para Ritmo Reciente</label>
+                    <p class="text-secondary small mb-3">Número de los últimos registros a usar para calcular la estimación de finalización "reciente".</p>
+                    <input type="number" min="1" max="30" class="form-control form-control-lg bg-dark text-white border-secondary" id="input-config-recent" value="3" required>
+                </div>
+                <div class="d-flex gap-2 mt-4 text-center">
+                    <button type="button" id="btn-config-close" class="btn btn-outline-light w-50">Cancelar</button>
+                    <button type="submit" class="btn btn-primary w-50">Guardar</button>
+                </div>
+            </form>
+        </main>
+
+        <!-- VIEW SETUP -->
+        <main id="view-setup" class="glass-panel">
+            <h3 class="mb-4 text-center text-white">Nuevo Libro</h3>
+            <form id="form-setup">
+                <div class="mb-3">
+                    <label class="form-label text-light">Título del libro</label>
+                    <input type="text" class="form-control form-control-lg" id="input-title" required placeholder="Ej: El Conde de Montecristo">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-light">Total de páginas</label>
+                    <input type="number" min="1" class="form-control form-control-lg" id="input-pages" required placeholder="Ej: 1200">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg mt-2">Empezar Lectura</button>
+            </form>
+        </main>
+
+        <!-- VIEW TEST -->
+        <main id="view-test" class="glass-panel d-none">
+            <h3 class="mb-3 text-center text-white">Test de Velocidad</h3>
+            <p class="text-center text-secondary mb-4">Vas a leer <strong>1 página</strong> de <em id="test-title" class="text-white"></em>. Inicia el reloj cuando empieces, páralo al terminar.</p>
+            
+            <div class="text-center mb-4">
+                <div id="time-display" class="display-3 fw-bold mb-3 font-monospace text-white">00:00.00</div>
+                <button id="btn-toggle-timer" type="button" class="btn btn-primary btn-lg rounded-pill px-5 mb-2 shadow">Iniciar reloj</button>
+            </div>
+            <button id="btn-save-test" class="btn btn-success w-100 mb-4 shadow-sm">Guardar tiempo de lectura</button>
+            
+            <hr class="border-secondary opacity-25">
+            <h6 class="text-center text-muted mb-3">O introduce el tiempo a mano:</h6>
+            <form id="form-manual-test" class="d-flex gap-2 justify-content-center">
+                <input type="number" min="0" class="form-control text-center bg-dark text-white border-secondary" style="max-width: 80px;" id="input-test-min" placeholder="Min">
+                <input type="number" min="0" max="59" class="form-control text-center bg-dark text-white border-secondary" style="max-width: 80px;" id="input-test-sec" placeholder="Seg">
+                <button type="submit" class="btn btn-outline-light">Guardar</button>
+            </form>
+        </main>
+
+        <!-- VIEW DASHBOARD -->
+        <main id="view-dashboard" class="d-none">
+            <div class="glass-panel mb-4 pb-4">
+                <h4 id="dash-title" class="mb-1 text-center fw-bold text-white"></h4>
+                <p id="dash-totals" class="text-center text-secondary mb-4 small"></p>
+                
+                <div class="progress mb-4 rounded-pill border border-dark" style="height: 1.25rem; background: rgba(0,0,0,0.4);">
+                    <div id="dash-progress" class="progress-bar progress-bar-striped progress-bar-animated fw-bold" role="progressbar" style="width: 0%; background: var(--telos-gradient);">0%</div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <div class="stat-label">Pág. Actual</div>
+                            <div id="stat-last-page" class="stat-value">0</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <div class="stat-label">Faltan</div>
+                            <div id="stat-pages-left" class="stat-value">0</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <div class="stat-label">Invertido</div>
+                            <div id="stat-time-spent" class="stat-value">0h</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box" style="border: 1px solid rgba(255,255,255,0.15) !important;">
+                            <div class="stat-label text-light">Fin Est. (Global)</div>
+                            <div id="stat-end-date" class="stat-value text-white" style="font-size: 1.15rem;">-</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box" style="border: 1px solid var(--telos-accent) !important; background: rgba(139, 92, 246, 0.1);">
+                            <div class="stat-label fw-bold text-light">Fin (Reciente <span id="lbl-recent-count" class="badge bg-secondary px-1 py-0 rounded-1" style="font-size:0.5rem">3</span>)</div>
+                            <div id="stat-end-date-recent" class="stat-value text-accent" style="font-size: 1.15rem;">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel mb-4 shadow highlight-panel">
+                <h5 class="mb-3 text-white">Registrar Avance Diario</h5>
+                <form id="form-log" class="row g-2 align-items-center mb-3">
+                    <div class="col-5">
+                        <input type="date" class="form-control" id="input-log-date" required>
+                    </div>
+                    <div class="col-4">
+                        <input type="number" min="0" class="form-control text-center" id="input-log-page" placeholder="Pág final" required>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary w-100 h-100 fw-bold">✔</button>
+                    </div>
+                </form>
+                
+                <h6 class="text-secondary mt-4 mb-2" style="font-size: 0.75rem; text-transform: uppercase;">Historial de Lectura</h6>
+                <div id="log-list" class="list-group list-group-flush border border-secondary border-opacity-25" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <!-- Logs dinamicos -->
+                </div>
+            </div>
+            
+            <div class="text-center mt-5 mb-2">
+                <button id="btn-reset" class="btn btn-sm btn-outline-danger px-4 rounded-pill">Archivar / Resetear Libro</button>
+            </div>
+        </main>
+    </div>
+    
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
