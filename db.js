@@ -44,19 +44,36 @@ function getActiveBook() {
   });
 }
 
-function addBook(title, totalPages) {
+function addBook(title, totalPages, targetDate = null) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('books', 'readwrite');
     const store = tx.objectStore('books');
     const req = store.add({
       title,
       totalPages,
+      targetDate,
       pageSpeedMs: 0,
       status: 'active',
       createdAt: Date.now()
     });
     
     req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function updateBookTargetDate(bookId, targetDate) {
+  return new Promise((resolve, reject) => {
+    const store = db.transaction('books', 'readwrite').objectStore('books');
+    const req = store.get(bookId);
+    
+    req.onsuccess = () => {
+      const book = req.result;
+      if (book) {
+        book.targetDate = targetDate;
+        store.put(book).onsuccess = () => resolve();
+      } else reject('Book not found');
+    };
     req.onerror = () => reject(req.error);
   });
 }

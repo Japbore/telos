@@ -47,6 +47,10 @@
                     <label class="form-label text-light">Total de páginas</label>
                     <input type="number" min="1" class="form-control form-control-lg" id="input-pages" required placeholder="Ej: 1200">
                 </div>
+                <div class="mb-4">
+                    <label class="form-label text-light">Fecha objetivo (Opcional)</label>
+                    <input type="date" class="form-control form-control-lg" id="input-setup-target-date">
+                </div>
                 <button type="submit" class="btn btn-primary w-100 btn-lg mt-2">Empezar Lectura</button>
             </form>
         </main>
@@ -120,6 +124,38 @@
                     </div>
                     <div class="col-12 mt-2" id="estimation-info" style="display: none;">
                         <p class="text-secondary small text-center m-0"><em>Añade un segundo registro para ver las estimaciones.</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel mb-4 shadow highlight-panel" id="target-date-panel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-white m-0">Tu Objetivo</h5>
+                    <button class="btn btn-sm btn-outline-light py-0 px-2" style="font-size: 0.8rem" id="btn-edit-target">Cambiar</button>
+                </div>
+                
+                <div id="target-setup-container" class="d-none">
+                    <form id="form-target-date" class="d-flex gap-2 mb-2">
+                        <input type="date" class="form-control" id="input-target-date">
+                        <button type="submit" class="btn btn-primary">Fijar</button>
+                    </form>
+                </div>
+                <div id="target-info-container">
+                    <p class="text-secondary small mb-0 d-none" id="target-no-date">No tienes una fecha objetivo definida. ¡Configura una!</p>
+                    <div id="target-stats" class="d-none">
+                        <div class="d-flex align-items-center text-accent fw-bold mb-3" style="font-size: 1.1rem; gap: 8px;">
+                            <span>🎯</span> <span id="target-date-display">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center bg-dark bg-opacity-50 rounded p-2">
+                            <div class="text-center w-50" style="border-right: 1px solid rgba(255,255,255,0.1);">
+                                <div class="text-light fs-4 fw-bold" id="target-pages-day">0</div>
+                                <div class="text-secondary small" style="text-transform: uppercase; font-size: 0.65rem;">Páginas / día</div>
+                            </div>
+                            <div class="text-center w-50">
+                                <div class="text-light fs-4 fw-bold" id="target-mins-day">0</div>
+                                <div class="text-secondary small" style="text-transform: uppercase; font-size: 0.65rem;">Mins / día</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

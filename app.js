@@ -72,9 +72,10 @@ document.getElementById('form-setup').addEventListener('submit', async (e) => {
   e.preventDefault();
   const title = document.getElementById('input-title').value.trim();
   const pages = parseInt(document.getElementById('input-pages').value, 10);
+  const targetDate = document.getElementById('input-setup-target-date').value || null;
   
   if (title && pages > 0) {
-    await addBook(title, pages);
+    await addBook(title, pages, targetDate);
     await loadState();
   }
 });
@@ -168,6 +169,42 @@ async function renderDashboard() {
    const bar = document.getElementById('dash-progress');
    bar.style.width = `${pct}%`;
    bar.textContent = `${Math.floor(pct)}%`;
+   
+   const targetInfoContainer = document.getElementById('target-info-container');
+   const targetSetupContainer = document.getElementById('target-setup-container');
+   const targetNoDate = document.getElementById('target-no-date');
+   const targetStats = document.getElementById('target-stats');
+   
+   targetInfoContainer.classList.remove('d-none');
+   targetSetupContainer.classList.add('d-none');
+   
+   if (!activeBook.targetDate) {
+       targetNoDate.classList.remove('d-none');
+       targetStats.classList.add('d-none');
+   } else {
+       targetNoDate.classList.add('d-none');
+       targetStats.classList.remove('d-none');
+       
+       /* Fix timezone issue from simple string */
+       const targetDateObj = new Date(activeBook.targetDate + "T00:00:00");
+       const todayDate = new Date();
+       todayDate.setHours(0,0,0,0);
+       
+       document.getElementById('target-date-display').textContent = targetDateObj.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+       
+       let daysLeft = Math.ceil((targetDateObj.getTime() - todayDate.getTime()) / (1000*3600*24));
+       if (daysLeft < 1) daysLeft = 1; // avoid division by 0 and allow same-day finish
+       
+       if (remainingPages === 0) {
+           document.getElementById('target-pages-day').textContent = "0";
+           document.getElementById('target-mins-day').textContent = "0";
+       } else {
+           const pagesPerDay = Math.ceil(remainingPages / daysLeft);
+           document.getElementById('target-pages-day').textContent = pagesPerDay.toString();
+           const minsPerDay = Math.ceil((pagesPerDay * msPage) / (1000 * 60));
+           document.getElementById('target-mins-day').textContent = minsPerDay.toString();
+       }
+   }
    
    const recentCount = getConfigRecentLogs();
    document.getElementById('lbl-recent-count').textContent = recentCount;
@@ -323,6 +360,23 @@ document.getElementById('btn-reset').addEventListener('click', async () => {
        document.getElementById('form-manual-test').reset();
        await loadState();
     }
+});
+
+document.getElementById('btn-edit-target').addEventListener('click', () => {
+   document.getElementById('target-info-container').classList.add('d-none');
+   document.getElementById('target-setup-container').classList.remove('d-none');
+   if (activeBook && activeBook.targetDate) {
+       document.getElementById('input-target-date').value = activeBook.targetDate;
+   } else {
+       document.getElementById('input-target-date').value = "";
+   }
+});
+
+document.getElementById('form-target-date').addEventListener('submit', async (e) => {
+   e.preventDefault();
+   const v = document.getElementById('input-target-date').value;
+   await updateBookTargetDate(activeBook.id, v || null);
+   await loadState();
 });
 
 // Run Init
