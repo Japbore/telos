@@ -82,22 +82,28 @@
                 </div>
 
                 <div class="row g-2 mb-3">
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="stat-box">
                             <div class="stat-label">Pág. Actual</div>
                             <div id="stat-last-page" class="stat-value">0</div>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-label">Invertido</div>
+                            <div id="stat-time-spent" class="stat-value">0h</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
                         <div class="stat-box">
                             <div class="stat-label">Faltan</div>
                             <div id="stat-pages-left" class="stat-value">0</div>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="stat-box">
-                            <div class="stat-label">Invertido</div>
-                            <div id="stat-time-spent" class="stat-value">0h</div>
+                            <div class="stat-label">Resta</div>
+                            <div id="stat-time-left" class="stat-value">0h</div>
                         </div>
                     </div>
                     <div class="col-6">
@@ -111,6 +117,9 @@
                             <div class="stat-label fw-bold text-light">Fin (Reciente <span id="lbl-recent-count" class="badge bg-secondary px-1 py-0 rounded-1" style="font-size:0.5rem">3</span>)</div>
                             <div id="stat-end-date-recent" class="stat-value text-accent" style="font-size: 1.15rem;">-</div>
                         </div>
+                    </div>
+                    <div class="col-12 mt-2" id="estimation-info" style="display: none;">
+                        <p class="text-secondary small text-center m-0"><em>Añade un segundo registro para ver las estimaciones.</em></p>
                     </div>
                 </div>
             </div>

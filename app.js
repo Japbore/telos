@@ -160,6 +160,7 @@ async function renderDashboard() {
    const remainingMs = remainingPages * msPage;
    
    document.getElementById('stat-time-spent').textContent = msToText(totalMsSpent);
+   document.getElementById('stat-time-left').textContent = msToText(remainingMs);
    document.getElementById('stat-pages-left').textContent = remainingPages.toString();
    document.getElementById('stat-last-page').textContent = lastPage > 0 ? lastPage.toString() : "-";
    
@@ -174,16 +175,24 @@ async function renderDashboard() {
    let endTextGlobal = "---";
    let endTextRecent = "---";
    
-   if (logs.length > 0) {
+   const estimationInfo = document.getElementById('estimation-info');
+   if (estimationInfo) {
+       estimationInfo.style.display = (logs.length === 1 && remainingPages > 0) ? 'block' : 'none';
+   }
+   
+   if (logs.length > 1) {
        const todayDate = new Date();
        todayDate.setHours(0,0,0,0);
        
        // GLOBAL
-       const firstDate = new Date(logs[0].date);
+       const firstLog = logs[0];
+       const firstDate = new Date(firstLog.date);
        firstDate.setHours(0,0,0,0);
+       
        const ellapsedDaysSinceStart = Math.ceil((todayDate.getTime() - firstDate.getTime()) / (1000*3600*24));
-       const activeDaysGlobal = ellapsedDaysSinceStart === 0 ? 1 : ellapsedDaysSinceStart + 1;
-       const avgPagesGlobal = lastPage / activeDaysGlobal;
+       const activeDaysGlobal = ellapsedDaysSinceStart === 0 ? 1 : ellapsedDaysSinceStart;
+       const pagesReadSinceFirst = lastPage - firstLog.lastPageRead;
+       const avgPagesGlobal = activeDaysGlobal > 0 && pagesReadSinceFirst > 0 ? pagesReadSinceFirst / activeDaysGlobal : 0;
        
        if (remainingPages > 0 && avgPagesGlobal > 0) {
            const remainingDaysGlobal = Math.ceil(remainingPages / avgPagesGlobal);
@@ -197,19 +206,17 @@ async function renderDashboard() {
        
        // RECIENTE
        let recentRate = avgPagesGlobal;
-       if (logs.length > 1) {
-           const limit = Math.min(recentCount, logs.length - 1);
-           const comparisonLog = logs[logs.length - 1 - limit]; 
-           const comparisonDate = new Date(comparisonLog.date);
-           comparisonDate.setHours(0,0,0,0);
-           const logLastDate = new Date(lastLog.date);
-           logLastDate.setHours(0,0,0,0);
-           
-           const recentDaysElapsed = Math.max(1, Math.ceil((logLastDate.getTime() - comparisonDate.getTime()) / (1000*3600*24)));
-           const recentPagesDiff = lastPage - comparisonLog.lastPageRead;
-           if (recentPagesDiff > 0) {
-               recentRate = recentPagesDiff / recentDaysElapsed;
-           }
+       const limit = Math.min(recentCount, logs.length - 1);
+       const comparisonLog = logs[logs.length - 1 - limit]; 
+       const comparisonDate = new Date(comparisonLog.date);
+       comparisonDate.setHours(0,0,0,0);
+       const logLastDate = new Date(lastLog.date);
+       logLastDate.setHours(0,0,0,0);
+       
+       const recentDaysElapsed = Math.max(1, Math.ceil((logLastDate.getTime() - comparisonDate.getTime()) / (1000*3600*24)));
+       const recentPagesDiff = lastPage - comparisonLog.lastPageRead;
+       if (recentPagesDiff > 0) {
+           recentRate = recentPagesDiff / recentDaysElapsed;
        }
        
        if (remainingPages > 0 && recentRate > 0) {
@@ -219,6 +226,11 @@ async function renderDashboard() {
        } else if (remainingPages === 0) {
            endTextRecent = "¡Completado!";
        }
+   } else if (remainingPages === 0) {
+       endTextGlobal = "¡Completado!";
+       endTextRecent = "¡Completado!";
+       bar.classList.replace('progress-bar-animated', 'bg-success');
+       bar.style.background = 'var(--telos-success)';
    }
    
    document.getElementById('stat-end-date').textContent = endTextGlobal;
