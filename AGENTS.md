@@ -58,12 +58,23 @@ La base se llama `telos-db` y actualmente está en la versión 1. Tiene los alma
 
 ## Estado conocido que debe revisarse al tocar estas áreas
 
-- `docs/tracker.md` está desactualizado respecto al código actual.
-- La documentación menciona ES modules, pero la aplicación usa scripts globales.
-- `targetDate` existe en el código, pero no está reflejado completamente en el modelo documentado.
-- `manifest.json` todavía tiene `icons: []`.
-- `sw.js` no implementa limpieza de cachés antiguos mediante `activate`.
-- Al completar todas las páginas se muestra el estado completado, pero el libro no cambia explícitamente a `status: 'finished'`.
+### Código
+
+- **`sw.js`** no implementa limpieza de cachés antiguos mediante `activate`. Puede acumular versiones anteriores.
+- **`app.js`** tiene 383 líneas (guía del proyecto: 100-150). Considerar separar en módulos si crece más.
+- **`styles.css`** usa `!important` en reglas de botones e inputs (violación de convenciones.md).
+- Al completar todas las páginas se muestra "Completado", pero el libro no cambia explícitamente a `status: 'finished'`.
+
+### Documentación
+
+- **`docs/arquitectura.md:53`** menciona "ES modules" pero la aplicación usa scripts globales.
+- **`docs/arquitectura.md:80-82`** lista un directorio `icons/` que no existe en el repositorio.
+- **`docs/modelo-datos.md`** no incluye el campo `targetDate` en el DDL, aunque existe en el código.
+- **`docs/BACKLOG.md`** está vacío; las mejoras pendientes se registran en `docs/tracker.md`.
+
+### PWA
+
+- **`manifest.json`** tiene `icons: []`. Sin iconos la app no se puede instalar desde el navegador.
 
 ## Validación
 
