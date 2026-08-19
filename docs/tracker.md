@@ -26,6 +26,8 @@
 | 13 | Refactorizar `app.js` (383 líneas, guía: 100-150) | Baja | Separar en módulos si crece más |
 | 14 | Eliminar `!important` en CSS (viola convenciones.md) | Baja | Aumentar especificidad en su lugar |
 | 15 | Actualizar `docs/arquitectura.md`: menciona ES modules pero se usan scripts globales | Baja | Corregir documentación |
+| 16 | Mostrar tiempo estimado de lectura y tiempo medio diario en cada registro del historial | Alta | HU-06, RF-08 — v0.2, ver `docs/versiones/v0.2.md`. Implementado en `app.js`, pendiente de prueba manual. |
+| 17 | Historial compacto: alineación en una sola fila, fecha ajustada, botón Borrar en la misma línea | Alta | RF-09 — v0.2, ver `docs/versiones/v0.2.md` |
 
 ### Leyenda
 

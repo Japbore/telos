@@ -280,41 +280,52 @@ async function renderDashboard() {
    if (logs.length === 0) {
        logList.innerHTML = '<div class="p-3 text-center text-secondary small">Aún no hay registros.</div>';
    } else {
-       for (let i = logs.length - 1; i >= 0; i--) {
-           const log = logs[i];
-           const div = document.createElement('div');
-           div.className = 'list-group-item bg-transparent text-white border-0 d-flex justify-content-between align-items-center px-3 py-2';
-           div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-           
-           const dStr = new Date(log.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
-           let pagesDelDia = log.lastPageRead;
-           if (i > 0) pagesDelDia = log.lastPageRead - logs[i-1].lastPageRead;
-           
-           div.innerHTML = `
-               <span class="small text-secondary fw-semibold">${dStr}</span>
-               <div class="text-center w-50">
-                 <span class="fw-bold">Pág. ${log.lastPageRead}</span>
-                 <span class="small mx-2" style="color: var(--telos-success)">+${pagesDelDia}</span>
-               </div>
-           `;
-           
-           if (i === logs.length - 1) {
-               const btnDel = document.createElement('button');
-               btnDel.className = 'btn btn-sm btn-outline-danger py-0 px-2';
-               btnDel.style.fontSize = '0.75rem';
-               btnDel.innerHTML = 'Borrar';
-               btnDel.onclick = async () => {
-                   if (confirm("¿Borrar de forma permanente este registro?")) {
-                       await deleteLog(log.id);
-                       await loadState();
-                   }
-               };
-               div.appendChild(btnDel);
-           } else {
-               div.innerHTML += `<div style="width: 50px;"></div>`;
-           }
-           logList.appendChild(div);
-       }
+        for (let i = logs.length - 1; i >= 0; i--) {
+            const log = logs[i];
+            const div = document.createElement('div');
+            div.className = 'list-group-item bg-transparent text-white border-0 px-3 py-2';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            
+            const dStr = new Date(log.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+            let pagesDelDia = log.lastPageRead;
+            if (i > 0) pagesDelDia = log.lastPageRead - logs[i-1].lastPageRead;
+            
+            const msPage = activeBook.pageSpeedMs;
+            const tiempoEstimado = msToText(pagesDelDia * msPage);
+            
+            let tiempoMedioHtml = '';
+            if (i > 0) {
+                const prevLog = logs[i - 1];
+                const diasEntre = Math.max(1, Math.ceil((new Date(log.date) - new Date(prevLog.date)) / (1000 * 3600 * 24)));
+                const pagDiff = log.lastPageRead - prevLog.lastPageRead;
+                const tiempoMedio = msToText(Math.round((pagDiff / diasEntre) * msPage));
+                tiempoMedioHtml = `<span class="text-secondary" style="font-size:0.6rem;"> · MEDIA ${tiempoMedio}/d</span>`;
+            }
+            
+            let btnDelHtml = '';
+            if (i === logs.length - 1) {
+                btnDelHtml = '<button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:0.7rem; flex:0 0 auto; white-space:nowrap; margin-left:2px;">Borrar</button>';
+            }
+            
+            div.innerHTML = `
+                <div style="display:flex; flex-wrap:nowrap; align-items:center;">
+                    <span class="small text-secondary fw-semibold" style="flex:1; text-align:center; white-space:nowrap;">${dStr}</span>
+                    <span class="fw-bold small" style="flex:1; text-align:center; white-space:nowrap;">Pág. ${log.lastPageRead} <span style="color: var(--telos-success)">+${pagesDelDia}</span></span>
+                    <span class="small fw-semibold" style="flex:1; text-align:center; white-space:nowrap; color: var(--telos-accent);">${tiempoEstimado}${tiempoMedioHtml}</span>
+                    ${btnDelHtml}
+                </div>
+            `;
+            
+            if (i === logs.length - 1) {
+                div.querySelector('.btn-outline-danger').onclick = async () => {
+                    if (confirm("¿Borrar de forma permanente este registro?")) {
+                        await deleteLog(log.id);
+                        await loadState();
+                    }
+                };
+            }
+            logList.appendChild(div);
+        }
    }
 }
 
