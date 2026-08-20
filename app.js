@@ -353,12 +353,11 @@ function getLogColors(logIndex, logs, book) {
    const prevLog = logs[logIndex - 1];
    const msPage = book.pageSpeedMs;
 
-   const logDate = new Date(log.date + "T00:00:00");
+   const createdDate = new Date(book.createdAt);
+   createdDate.setHours(0, 0, 0, 0);
    const targetDate = new Date(book.targetDate + "T00:00:00");
-   const daysUntilTarget = Math.max(1, Math.ceil((targetDate - logDate) / (1000 * 3600 * 24)));
-   const pagesRemainingAtStart = Math.max(0, book.totalPages - prevLog.lastPageRead);
-   const dailyTargetPages = Math.ceil(pagesRemainingAtStart / daysUntilTarget);
-   const dailyTargetMs = dailyTargetPages * msPage;
+   const totalDays = Math.max(1, Math.ceil((targetDate - createdDate) / (1000 * 3600 * 24)));
+   const dailyTargetMs = (book.totalPages / totalDays) * msPage;
 
    const increment = log.lastPageRead - prevLog.lastPageRead;
    const minutesRead = (increment * msPage) / 60000;
