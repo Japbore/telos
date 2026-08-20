@@ -133,3 +133,11 @@ input.form-control::-webkit-calendar-picker-indicator {
 .log-del {
   flex: 0 0 auto;
 }
+
+.log-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.log-row:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}

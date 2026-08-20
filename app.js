@@ -283,46 +283,49 @@ async function renderDashboard() {
         for (let i = logs.length - 1; i >= 0; i--) {
             const log = logs[i];
             const div = document.createElement('div');
-            div.className = 'list-group-item bg-transparent text-white border-0 px-3 py-2';
+            div.className = 'list-group-item text-white px-3 py-2 log-row';
+            div.style.border = 'none';
             div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            const colors = getLogColors(i, logs, activeBook);
+            if (colors) {
+                div.style.backgroundColor = colors.bg;
+                div.style.borderLeft = `3px solid ${colors.border}`;
+            } else {
+                div.style.backgroundColor = 'transparent';
+            }
             
-            const dStr = new Date(log.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const dStr = new Date(log.date + "T00:00:00").toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
             let pagesDelDia = log.lastPageRead;
             if (i > 0) pagesDelDia = log.lastPageRead - logs[i-1].lastPageRead;
             
-            const msPage = activeBook.pageSpeedMs;
-            const tiempoEstimado = msToText(pagesDelDia * msPage);
-            
-            let tiempoMedioHtml = '';
-            if (i > 0) {
-                const prevLog = logs[i - 1];
-                const diasEntre = Math.max(1, Math.ceil((new Date(log.date) - new Date(prevLog.date)) / (1000 * 3600 * 24)));
-                const pagDiff = log.lastPageRead - prevLog.lastPageRead;
-                const tiempoMedio = msToText(Math.round((pagDiff / diasEntre) * msPage));
-                tiempoMedioHtml = `<span class="text-secondary" style="font-size:0.6rem;"> · MEDIA ${tiempoMedio}/d</span>`;
-            }
-            
             let btnDelHtml = '';
             if (i === logs.length - 1) {
-                btnDelHtml = '<button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:0.7rem; flex:0 0 auto; white-space:nowrap; margin-left:2px;">Borrar</button>';
+                btnDelHtml = '<button class="btn btn-sm btn-outline-danger py-0 px-2 log-del-btn" style="font-size:0.7rem; flex:0 0 auto; white-space:nowrap; margin-left:2px;">Borrar</button>';
             }
             
             div.innerHTML = `
-                <div style="display:flex; flex-wrap:nowrap; align-items:center;">
-                    <span class="small text-secondary fw-semibold" style="flex:1; text-align:center; white-space:nowrap;">${dStr}</span>
-                    <span class="fw-bold small" style="flex:1; text-align:center; white-space:nowrap;">Pág. ${log.lastPageRead} <span style="color: var(--telos-success)">+${pagesDelDia}</span></span>
-                    <span class="small fw-semibold" style="flex:1; text-align:center; white-space:nowrap; color: var(--telos-accent);">${tiempoEstimado}${tiempoMedioHtml}</span>
+                <div class="log-entry-row">
+                    <span class="small text-secondary fw-semibold log-date">${dStr}</span>
+                    <span class="fw-bold small log-center">Pág. ${log.lastPageRead} <span style="color: var(--telos-success)">+${pagesDelDia}</span></span>
                     ${btnDelHtml}
                 </div>
             `;
             
+            const logIndex = i;
+            const logData = log;
+            div.addEventListener('click', (e) => {
+                if (e.target.classList.contains('log-del-btn')) return;
+                showLogDetail(logIndex, logs, activeBook);
+            });
+            
             if (i === logs.length - 1) {
-                div.querySelector('.btn-outline-danger').onclick = async () => {
+                div.querySelector('.log-del-btn').addEventListener('click', async (e) => {
+                    e.stopPropagation();
                     if (confirm("¿Borrar de forma permanente este registro?")) {
-                        await deleteLog(log.id);
+                        await deleteLog(logData.id);
                         await loadState();
                     }
-                };
+                });
             }
             logList.appendChild(div);
         }
@@ -340,6 +343,83 @@ function msToText(ms) {
    if (h > 0) return `${h}h ${m}m`;
    if (m > 0) return `${m}m ${s}s`;
    return `${s}s`;
+}
+
+function getLogColors(logIndex, logs, book) {
+   if (logIndex === 0) return null;
+   if (!book.targetDate) return null;
+
+   const log = logs[logIndex];
+   const prevLog = logs[logIndex - 1];
+   const msPage = book.pageSpeedMs;
+
+   const logDate = new Date(log.date + "T00:00:00");
+   const targetDate = new Date(book.targetDate + "T00:00:00");
+   const daysUntilTarget = Math.max(1, Math.ceil((targetDate - logDate) / (1000 * 3600 * 24)));
+   const pagesRemainingAtStart = Math.max(0, book.totalPages - prevLog.lastPageRead);
+   const dailyTargetPages = Math.ceil(pagesRemainingAtStart / daysUntilTarget);
+   const dailyTargetMs = dailyTargetPages * msPage;
+
+   const increment = log.lastPageRead - prevLog.lastPageRead;
+   const minutesRead = (increment * msPage) / 60000;
+   const dailyTargetMinutes = dailyTargetMs / 60000;
+
+   if (dailyTargetMinutes <= 0) return null;
+
+   const ratio = minutesRead / dailyTargetMinutes;
+   const t = Math.min(ratio / 1.2, 1);
+
+   const RED = [239, 68, 68];
+   const AMBER = [245, 158, 11];
+   const GREEN = [16, 185, 129];
+
+   let r, g, b;
+   if (t < 0.5) {
+      const u = t * 2;
+      r = Math.round(RED[0] + (AMBER[0] - RED[0]) * u);
+      g = Math.round(RED[1] + (AMBER[1] - RED[1]) * u);
+      b = Math.round(RED[2] + (AMBER[2] - RED[2]) * u);
+   } else {
+      const u = (t - 0.5) * 2;
+      r = Math.round(AMBER[0] + (GREEN[0] - AMBER[0]) * u);
+      g = Math.round(AMBER[1] + (GREEN[1] - AMBER[1]) * u);
+      b = Math.round(AMBER[2] + (GREEN[2] - AMBER[2]) * u);
+   }
+
+   const solid = `rgb(${r}, ${g}, ${b})`;
+   const bg = `rgba(${r}, ${g}, ${b}, 0.12)`;
+   return { bg, border: solid };
+}
+
+function showLogDetail(logIndex, logs, book) {
+   const log = logs[logIndex];
+   const msPage = book.pageSpeedMs;
+   
+   const dStr = new Date(log.date + "T00:00:00").toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' });
+   document.getElementById('detail-date').textContent = dStr;
+   document.getElementById('detail-last-page').textContent = log.lastPageRead;
+   
+   let increment = log.lastPageRead;
+   if (logIndex > 0) {
+       increment = log.lastPageRead - logs[logIndex - 1].lastPageRead;
+   }
+   document.getElementById('detail-increment').textContent = `+${increment}`;
+   
+   const totalTimeMs = log.lastPageRead * msPage;
+   document.getElementById('detail-time-read').textContent = msToText(totalTimeMs);
+   
+   let avgTimeText = '-';
+   if (logIndex > 0) {
+       const prevLog = logs[logIndex - 1];
+       const diasEntre = Math.max(1, Math.ceil((new Date(log.date) - new Date(prevLog.date)) / (1000 * 3600 * 24)));
+       const pagDiff = log.lastPageRead - prevLog.lastPageRead;
+       const avgMsPerDay = (pagDiff / diasEntre) * msPage;
+       avgTimeText = msToText(Math.round(avgMsPerDay)) + '/d';
+   }
+   document.getElementById('detail-avg-time').textContent = avgTimeText;
+   
+   const modal = new bootstrap.Modal(document.getElementById('log-detail-modal'));
+   modal.show();
 }
 
 document.getElementById('form-log').addEventListener('submit', async (e) => {
