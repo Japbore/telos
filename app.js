@@ -359,14 +359,15 @@ function getLogColors(logIndex, logs, book) {
    const totalDays = Math.max(1, Math.ceil((targetDate - createdDate) / (1000 * 3600 * 24)));
    const dailyTargetMs = (book.totalPages / totalDays) * msPage;
 
+   const daysBetween = Math.max(1, Math.ceil((new Date(log.date) - new Date(prevLog.date)) / (1000 * 3600 * 24)));
    const increment = log.lastPageRead - prevLog.lastPageRead;
-   const minutesRead = (increment * msPage) / 60000;
+   const avgMinutesPerDay = ((increment / daysBetween) * msPage) / 60000;
    const dailyTargetMinutes = dailyTargetMs / 60000;
 
    if (dailyTargetMinutes <= 0) return null;
 
-   const ratio = minutesRead / dailyTargetMinutes;
-   const t = Math.min(ratio / 1.2, 1);
+   const ratio = avgMinutesPerDay / dailyTargetMinutes;
+   const t = Math.max(0, Math.min(ratio / 1.2, 1));
 
    const RED = [239, 68, 68];
    const AMBER = [245, 158, 11];

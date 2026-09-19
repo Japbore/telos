@@ -4,10 +4,11 @@ Este documento contiene tareas, mejoras y bugs conocidos que se han pospuesto pa
 
 ## Bugs Conocidos
 
-| # | Descripción | Severidad | Detectado |
-|---|-------------|-----------|-----------|
-| 1 | Al completar todas las páginas, `status` del libro no cambia a `'finished'` — queda como `'active'` | Media | 2026-08-19 |
-| 2 | La tabla del historial de lectura (divs con `flex`) no se alinea como tabla: las columnas tienen anchos desiguales entre sí y entre filas. El `flex` no respeta el ancho de columna de forma uniforme. | Media | 2026-08-19 |
+| # | Descripción | Severidad | Detectado | Estado |
+|---|-------------|-----------|-----------|--------|
+| 1 | Al completar todas las páginas, `status` del libro no cambia a `'finished'` — queda como `'active'` | Media | 2026-08-19 | ⬚ Pendiente |
+| 2 | La tabla del historial de lectura (divs con `flex`) no se alinea como tabla: las columnas tienen anchos desiguales entre sí y entre filas. El `flex` no respeta el ancho de columna de forma uniforme. | Media | 2026-08-19 | ⬚ Pendiente |
+| 3 | El color del registro de lectura (`getLogColors`) se calculaba con el tiempo total acumulado del incremento en vez del tiempo medio diario, inflando el ratio si pasaban varios días entre registros | Media | 2026-09-19 | ✅ Corregido (v0.2.0) |
 
 ## Futuras Mejoras (Ideas)
 
@@ -36,3 +37,4 @@ Este documento contiene tareas, mejoras y bugs conocidos que se han pospuesto pa
 | Fecha | Cambio |
 |-------|--------|
 | 2026-08-19 | Backlog inicial — items derivados de auditoría técnica |
+| 2026-09-19 | Registro y corrección del bug #3 (cálculo de color de registros por tiempo medio diario) |

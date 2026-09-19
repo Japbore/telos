@@ -60,6 +60,7 @@ Se realizó un análisis completo del estado del proyecto. La funcionalidad core
 |------------|-------------------------------------------------|
 | 2026-04-13 | Documentación base completada y planteamiento inicial |
 | 2026-08-19 | Auditoría completa: todas las tareas v0.1.0 marcadas como completadas. Añadidas tareas pendientes y discrepancias documentadas |
+| 2026-09-19 | Corrección de bug en getLogColors (app.js): cálculo de color basado en tiempo medio diario |
 
 ---
 
