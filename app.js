@@ -4,6 +4,9 @@
 // app.js — UI Logic and Presenter
 // ===========================================
 
+// --- Constantes ---
+const APP_VERSION = 'v0.2.0';
+
 let activeBook = null;
 let timerStart = null;
 let timerInterval = null;
@@ -40,6 +43,10 @@ document.getElementById('form-config').addEventListener('submit', async (e) => {
 });
 
 async function appInit() {
+  const versionEl = document.getElementById('app-version');
+  if (versionEl) {
+    versionEl.textContent = APP_VERSION;
+  }
   await initDB();
   await loadState();
 

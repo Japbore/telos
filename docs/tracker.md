@@ -28,6 +28,7 @@
 | 15 | Actualizar `docs/arquitectura.md`: menciona ES modules pero se usan scripts globales | Baja | Corregir documentación |
 | 16 | Mostrar tiempo estimado de lectura y tiempo medio diario en cada registro del historial | Alta | HU-06, RF-08 — v0.2, ver `docs/versiones/v0.2.md`. Implementado en `app.js`, pendiente de prueba manual. |
 | 17 | Historial compacto: alineación en una sola fila, fecha ajustada, botón Borrar en la misma línea | Alta | RF-09 — v0.2, ver `docs/versiones/v0.2.md` |
+| 18 | Mostrar versión de la app en pantalla de configuración | ✅ Completado | RF-17 — v0.2. Constante `APP_VERSION` en `app.js`, elemento `#app-version` en `index.html` |
 
 ### Leyenda
 
@@ -61,6 +62,7 @@ Se realizó un análisis completo del estado del proyecto. La funcionalidad core
 | 2026-04-13 | Documentación base completada y planteamiento inicial |
 | 2026-08-19 | Auditoría completa: todas las tareas v0.1.0 marcadas como completadas. Añadidas tareas pendientes y discrepancias documentadas |
 | 2026-09-19 | Corrección de bug en getLogColors (app.js): cálculo de color basado en tiempo medio diario |
+| 2026-09-19 | Implementación de RF-17: versión SemVer visible en pantalla de configuración |
 
 ---
 
